@@ -19,13 +19,6 @@ is_requires_admin_user: false
 is_always_run: true
 is_skippable: false
 inputs:
-  - xamarin_studio: "/Applications/Xamarin Studio.app"
-    opts:
-      title: Path to Xamarin Studio
-      description: |
-        Path to the Xamarin Studio. Most cases you can find it at "/Applications/Xamarin Studio.app"
-      is_required: true
-      is_expand: true
   - xamarin_action:
     opts:
       title: Xamarin action to run
@@ -34,17 +27,30 @@ inputs:
         - logout
       is_required: true
       is_expand: true
-  - xamarin_username: 
+  - bitrise_repository: $BITRISE_APP_SLUG
     opts:
-      title: Your Xamarin username
+      title: Bitrise repository slug
       description: |
-        Add your Xamarin username or email that holds the license you would like to connect
+        Bitrise repository slug
       is_required: true
       is_expand: true
-  - xamarin_password:
+  - xamarin_ios_license: yes
     opts:
-      title: Your Xamarin password
+      title: Xamarin.iOS License
       description: |
-        Add your Xamarin password or email that holds the license you would like to connect
+        Set true if you want to download the Xamarin.iOS license file
+      value_options:
+          - yes
+          - no
+      is_required: true
+      is_expand: true
+  - xamarin_android_license: yes
+    opts:
+      title: Xamarin.Android License
+      description: |
+        Set true if you want to download the Xamarin.Android license file
+      value_options:
+          - yes
+          - no
       is_required: true
       is_expand: true

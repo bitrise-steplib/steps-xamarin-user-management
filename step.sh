@@ -1,33 +1,27 @@
 #!/bin/bash
 
-mdtool="${xamarin_studio}/Contents/MacOS/mdtool"
+set -e
 
-if [ ! -e "${mdtool}" ]; then
-	echo "mdtool not found at path ${mdtool}"
+THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if [ -z "$bitrise_repository" ]; then
+	printf "\e[31mbitrise_repository variable not set\e[0m\n"
 	exit 1
 fi
 
-case "$xamarin_action" in
-	login)
-		if [ -z "${xamarin_username// }" ]; then 
-			echo "Xamarin username not set or empty"
-			exit 1
-		fi
+if [ -z "$xamarin_action" ]; then
+	printf "\e[31mxamarin_action variable not set\e[0m\n"
+	exit 1
+fi
 
-		if [ -z "${xamarin_password// }" ]; then 
-			echo "Xamarin password not set or empty"
-			exit 1
-		fi
+if [ -z "$xamarin_ios_license" ]; then
+	printf "\e[31mxamarin_ios_license variable not set\e[0m\n"
+	exit 1
+fi
 
-		"${mdtool}" account login -u "${xamarin_username}" -p "${xamarin_password}"
-		if [ $? == 0 ]; then
-			"${mdtool}" account info
-		fi
-		;;
-	logout)
-		"${mdtool}" account logout
-		;;
-	*)
-		echo "unknown command: ${xamarin_action}"
-		exit 1
-esac
+if [ -z "$xamarin_android_license" ]; then
+	printf "\e[31mxamarin_android_license variable not set\e[0m\n"
+	exit 1
+fi
+
+ruby "${THIS_SCRIPT_DIR}/step.rb"
