@@ -4,7 +4,7 @@ require 'base64'
 
 repository = ENV['bitrise_repository']
 action = ENV['xamarin_action']
-get_ios_license = ENV['xamarin_ios_license'].eql?("yes") ? true : false,
+get_ios_license = ENV['xamarin_ios_license'].eql?("yes") ? true : false
 get_android_license = ENV['xamarin_android_license'].eql?("yes") ? true : false
 
 # Get machine information
@@ -27,12 +27,17 @@ unless url
   exit 1
 end
 
-response = Net::HTTP.post_form(URI.parse(url), {
-    slug: repository,
-    device: machine_data,
-    ios_license: get_ios_license,
-    android_license: get_android_license
-  })
+uri = URI.parse(url)
+http = Net::HTTP.new(uri.host,uri.port)
+req = Net::HTTP::Post.new(uri.path)
+body = {
+  :slug => repository,
+  :device => machine_data,
+  :ios_license => get_ios_license,
+  :android_license => get_android_license
+}.to_json
+
+response = http.request(req, body)
 body = JSON.parse(response.body)
 
 if body['success'] == false

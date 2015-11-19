@@ -1,6 +1,10 @@
 format_version: 1.0.0
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
+app:
+  envs:
+  - BITRISE_APP_SLUG:
+
 workflows:
   test:
     steps:
@@ -9,12 +13,10 @@ workflows:
         inputs:
         - bitrise_repository: $BITRISE_APP_SLUG
         - xamarin_action: login
-        - xamarin_ios_license: yes
-        - xamarin_android_license: yes
+        - xamarin_ios_license: "yes"
+        - xamarin_android_license: "yes"
     - path::./:
         title: Logout
         inputs:
         - bitrise_repository: $BITRISE_APP_SLUG
         - xamarin_action: logout
-        - xamarin_ios_license: yes
-        - xamarin_android_license: yes
