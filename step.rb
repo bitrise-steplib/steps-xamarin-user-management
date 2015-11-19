@@ -2,6 +2,7 @@ require 'net/http'
 require 'json'
 require 'base64'
 require 'pathname'
+require 'fileutils'
 
 repository = ENV['bitrise_repository']
 action = ENV['xamarin_action']
