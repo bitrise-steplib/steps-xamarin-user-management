@@ -78,6 +78,11 @@ when "login"
     else
       FileUtils.mkdir_p(Pathname.new(android_license_path).dirname)
       `echo "#{body['android']}" | base64 --decode > "#{android_license_path}"`
+
+      puts body['android']
+      puts `echo "#{body['android']}" | base64 --decode`
+      puts android_license_path
+      puts ""
       puts "Xamarin.Android license file updated"
     end
   end
