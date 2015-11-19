@@ -59,6 +59,8 @@ when "login"
 
   if get_ios_license
     ios_license_path = "$HOME/Library/MonoTouch/License.v2"
+    puts body
+    puts "ios: #{body['ios']}"
     ios_license = Base64.decode64(body['ios'])
 
     if File.exists?(ios_license_path)
