@@ -9,8 +9,7 @@ get_ios_license = ENV['xamarin_ios_license'].eql?("yes") ? true : false
 get_android_license = ENV['xamarin_android_license'].eql?("yes") ? true : false
 
 # Get machine information
-ios_machine_data = `/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/bin/mtouch --datafile`
-android_machine_data = `/Library/Frameworks/Xamarin.Android.framework/Versions/Current/bin/mandroid --datafile`
+machine_data = `/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/bin/mtouch --datafile`
 
 # Get URL for action
 url = nil
@@ -34,7 +33,7 @@ http = Net::HTTP.new(uri.host,uri.port)
 req = Net::HTTP::Post.new(uri.path)
 body = {
   :slug => repository,
-  :device => android_machine_data,
+  :device => machine_data,
   :ios_license => get_ios_license,
   :android_license => get_android_license
 }.to_json
@@ -71,7 +70,7 @@ when "login"
   end
 
   if get_android_license
-    android_license_path = "$HOME/Library/MonoAndroid/License.v2"
+    android_license_path = "$HOME/Library/MonoAndroid/License"
 
     if File.exists?(android_license_path)
       puts "\e[31mFailed to update Android license. License already exists at path\e[0m"
@@ -79,8 +78,6 @@ when "login"
     else
       FileUtils.mkdir_p(Pathname.new(android_license_path).dirname)
       `echo "#{body['android']}" | base64 --decode > "#{android_license_path}"`
-
-      puts body
 
       puts "Xamarin.Android license file updated"
     end
