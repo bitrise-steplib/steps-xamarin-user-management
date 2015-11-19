@@ -1,6 +1,5 @@
 require 'net/http'
 require 'json'
-require 'base64'
 require 'pathname'
 require 'fileutils'
 
@@ -59,30 +58,26 @@ when "login"
 
   if get_ios_license
     ios_license_path = "$HOME/Library/MonoTouch/License.v2"
-    puts body
-    puts "ios: #{body['ios']}"
-    ios_license = Base64.decode64(body['ios'])
 
     if File.exists?(ios_license_path)
       puts "\e[31mFailed to update iOS license. License already exists at path\e[0m"
       exit 1
     else
       FileUtils.mkdir_p(Pathname.new(ios_license_path).dirname)
-      File.open(ios_license_path, 'w') { |file| file.write(ios_license) }
+      `echo "#{body['ios']}" | base64 --decode > "#{ios_license_path}"`
       puts "Xamarin.iOS license file updated"
     end
   end
 
   if get_android_license
     android_license_path = "$HOME/Library/MonoAndroid/License.v2"
-    android_license = Base64.decode64(body['android'])
 
     if File.exists?(android_license_path)
       puts "\e[31mFailed to update Android license. License already exists at path\e[0m"
       exit 1
     else
       FileUtils.mkdir_p(Pathname.new(android_license_path).dirname)
-      File.open(android_license_path, 'w') { |file| file.write(android_license) }
+      `echo "#{body['android']}" | base64 --decode > "#{android_license_path}"`
       puts "Xamarin.Android license file updated"
     end
   end
