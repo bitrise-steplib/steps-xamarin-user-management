@@ -9,7 +9,8 @@ get_ios_license = ENV['xamarin_ios_license'].eql?("yes") ? true : false
 get_android_license = ENV['xamarin_android_license'].eql?("yes") ? true : false
 
 # Get machine information
-machine_data = `/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/bin/mtouch --datafile`
+ios_machine_data = `/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/bin/mtouch --datafile`
+android_machine_data = `/Library/Frameworks/Xamarin.Android.framework/Versions/Current/bin/mandroid --datafile`
 
 # Get URL for action
 url = nil
@@ -33,7 +34,7 @@ http = Net::HTTP.new(uri.host,uri.port)
 req = Net::HTTP::Post.new(uri.path)
 body = {
   :slug => repository,
-  :device => machine_data,
+  :device => android_machine_data,
   :ios_license => get_ios_license,
   :android_license => get_android_license
 }.to_json
