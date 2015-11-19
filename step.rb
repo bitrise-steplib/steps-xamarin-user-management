@@ -1,6 +1,7 @@
 require 'net/http'
 require 'json'
 require 'base64'
+require 'pathname'
 
 repository = ENV['bitrise_repository']
 action = ENV['xamarin_action']
@@ -63,6 +64,7 @@ when "login"
       puts "\e[31mFailed to update iOS license. License already exists at path\e[0m"
       exit 1
     else
+      FileUtils.mkdir_p(Patname.new(ios_license_path).dirname)
       File.open(ios_license_path, 'w') { |file| file.write(ios_license) }
       puts "Xamarin.iOS license file updated"
     end
@@ -76,6 +78,7 @@ when "login"
       puts "\e[31mFailed to update Android license. License already exists at path\e[0m"
       exit 1
     else
+      FileUtils.mkdir_p(Patname.new(android_license_path).dirname)
       File.open(android_license_path, 'w') { |file| file.write(android_license) }
       puts "Xamarin.Android license file updated"
     end
