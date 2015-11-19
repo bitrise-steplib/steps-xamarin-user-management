@@ -57,7 +57,7 @@ when "login"
     puts "Machine usage: #{body['usedMachines']}/#{body['allowedMachines']}"
   end
 
-  unless get_ios_license
+  if get_ios_license
     ios_license_path = "$HOME/Library/MonoTouch/License.v2"
     ios_license = Base64.strict_decode64(body['ios'])
 
@@ -71,11 +71,11 @@ when "login"
     end
   end
 
-  unless get_android_license
+  if get_android_license
     android_license_path = "$HOME/Library/MonoAndroid/License.v2"
     android_license = Base64.strict_decode64(body['android'])
 
-    if File.exists?(ios_license_path)
+    if File.exists?(android_license_path)
       puts "\e[31mFailed to update Android license. License already exists at path\e[0m"
       exit 1
     else
