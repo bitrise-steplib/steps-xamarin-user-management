@@ -80,7 +80,6 @@ when "login"
       `echo "#{body['android']}" | base64 --decode > "#{android_license_path}"`
 
       puts body
-      puts `cat #{android_license_path}`
 
       puts "Xamarin.Android license file updated"
     end
