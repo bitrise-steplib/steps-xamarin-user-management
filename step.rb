@@ -85,6 +85,27 @@ when "login"
 
   puts ""
   puts "\e[32mSuccessfully logged in to Xamarin"
+
+  # Get components
+  puts ""
+  puts "Updating Xamarin Components Credentials"
+
+  uri = URI.parse("http://xamarin.bitrise.io/components")
+  http = Net::HTTP.new(uri.host,uri.port)
+  req = Net::HTTP::Post.new(uri.path)
+  body = {
+    :slug => repository
+  }.to_json
+
+  response = http.request(req, body)
+  body = JSON.parse(response.body)
+
+  if body['success'] == false
+    puts "\e[31mFailed to update Xamarin Components Credentials\e[0m"
+  else
+    `echo "#{body['credential']}" | base64 --decode > "$HOME/.xamarin-credentials"`
+    puts "\e[32mUpdated Xamarin Components Credentials\e[0m"
+  end
 when "logout"
   puts ""
   puts "\e[32mSuccessfully logged out from Xamarin"
