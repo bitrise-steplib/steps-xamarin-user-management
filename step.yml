@@ -30,23 +30,23 @@ inputs:
         Bitrise repository slug
       is_required: true
       is_expand: true
-  - xamarin_ios_license: yes
+  - xamarin_ios_license: "yes"
     opts:
       title: Xamarin.iOS License
       description: |
         Set true if you want to download the Xamarin.iOS license file
       value_options:
-          - yes
-          - no
+          - "yes"
+          - "no"
       is_required: true
       is_expand: true
-  - xamarin_android_license: yes
+  - xamarin_android_license: "yes"
     opts:
       title: Xamarin.Android License
       description: |
         Set true if you want to download the Xamarin.Android license file
       value_options:
-          - yes
-          - no
+          - "yes"
+          - "no"
       is_required: true
       is_expand: true
