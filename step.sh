@@ -4,13 +4,8 @@ set -e
 
 THIS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if [ -z "$bitrise_repository" ]; then
-	printf "\e[31mbitrise_repository variable not set\e[0m\n"
-	exit 1
-fi
-
-if [ -z "$xamarin_action" ]; then
-	printf "\e[31mxamarin_action variable not set\e[0m\n"
+if [ -z "$build_slug" ]; then
+	printf "\e[build_slug variable not set\e[0m\n"
 	exit 1
 fi
 
@@ -22,6 +17,10 @@ fi
 if [ -z "$xamarin_android_license" ]; then
 	printf "\e[31mxamarin_android_license variable not set\e[0m\n"
 	exit 1
+fi
+
+if [ -z "$xamarin_mac_license" ]; then
+	export xamarin_mac_license="no"
 fi
 
 ruby "${THIS_SCRIPT_DIR}/step.rb"
