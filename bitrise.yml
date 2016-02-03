@@ -11,15 +11,10 @@ workflows:
     - path::./:
         title: Login
         inputs:
-        - bitrise_repository: $BITRISE_APP_SLUG
-        - xamarin_action: login
+        - build_slug: $BITRISE_BUILD_SLUG
         - xamarin_ios_license: "yes"
         - xamarin_android_license: "yes"
-    - path::./:
-        title: Logout
-        inputs:
-        - bitrise_repository: $BITRISE_APP_SLUG
-        - xamarin_action: logout
+        - xamarin_mac_license: "no"
 
   # ----------------------------------------------------------------
   # --- workflows to Share this step into a Step Library
@@ -28,7 +23,7 @@ workflows:
       # if you want to share this step into a StepLib
       - MY_STEPLIB_REPO_FORK_GIT_URL:
       - STEP_ID_IN_STEPLIB: xamarin-user-management
-      - STEP_GIT_VERION_TAG_TO_SHARE: 0.9.0
+      - STEP_GIT_VERION_TAG_TO_SHARE: 1.0.0
       - STEP_GIT_CLONE_URL: https://github.com/bitrise-steplib/steps-xamarin-user-management.git
     description: |-
       If this is the first time you try to share a Step you should
