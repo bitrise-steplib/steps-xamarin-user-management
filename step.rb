@@ -5,7 +5,7 @@ require 'fileutils'
 
 ios_license_path = "$HOME/Library/MonoTouch/License.v2"
 android_license_path = "$HOME/Library/MonoAndroid/License"
-mac_license_path = "$HOME/Library/Xamarin.Mac/License.v2"
+mac_license_path = "$HOME/Library/Xamarin.Mac/License"
 
 build_slug = ENV['build_slug']
 get_ios_license = ENV['xamarin_ios_license'].eql?("yes") ? true : false
@@ -73,14 +73,12 @@ end
 if get_android_license
   FileUtils.mkdir_p(Pathname.new(android_license_path).dirname)
   `echo "#{body['android']}" | base64 --decode > "#{android_license_path}"`
-
   puts "  \e[32mXamarin.Android license file updated\e[0m (usage: #{body['android_used_machines']}/#{body['android_allowed_machines']})"
 end
 
 if get_mac_license
   FileUtils.mkdir_p(Pathname.new(mac_license_path).dirname)
   `echo "#{body['mac']}" | base64 --decode > "#{mac_license_path}"`
-
   puts "  \e[32mXamarin.Mac license file updated\e[0m (usage: #{body['mac_used_machines']}/#{body['mac_allowed_machines']})"
 end
 
