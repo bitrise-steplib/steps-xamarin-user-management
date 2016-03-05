@@ -3,16 +3,16 @@ require 'json'
 require 'pathname'
 require 'fileutils'
 
-ios_license_path = "$HOME/Library/MonoTouch/License.v2"
-android_license_path = "$HOME/Library/MonoAndroid/License"
-mac_license_path = "$HOME/Library/Xamarin.Mac/License"
+ios_license_path = "#{ENV['HOME']}/Library/MonoTouch/License.v2"
+android_license_path = "#{ENV['HOME']}/Library/MonoAndroid/License"
+mac_license_path = "#{ENV['HOME']}/Library/Xamarin.Mac/License"
 
 build_slug = ENV['build_slug']
 get_ios_license = ENV['xamarin_ios_license'].eql?("yes") ? true : false
 get_android_license = ENV['xamarin_android_license'].eql?("yes") ? true : false
 get_mac_license = ENV['xamarin_mac_license'].eql?("yes") ? true : false
 
-puts "\e[34mGathering Xamarin License requirements"
+puts "\e[34mGathering Xamarin License requirements\e[0m"
 licenses = []
 if get_ios_license && File.exists?(ios_license_path)
   get_ios_license = false
@@ -33,11 +33,13 @@ elsif get_mac_license
   licenses << "Xamarin.Mac"
 end
 
-if licenses.count > 0
-  puts "Downloading licenses: #{licenses.join(', ')}"
+if licenses.count == 0
+  puts "\e[32mAll requested licenses have already been downloaded to this machine\e[0m"
+  exit 0
 end
 
 # Get machine information
+puts "Downloading license files for #{licenses.join(', ')}"
 machine_data = `/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/bin/mtouch --datafile`
 
 url = 'http://xamarin.bitrise.io/add_machine'
@@ -62,7 +64,7 @@ if body['success'] == false
 end
 
 puts ""
-puts "\e[32mSuccessfully logged in to Xamarin"
+puts "\e[34mUpdating license files\e[0m"
 
 if get_ios_license
   FileUtils.mkdir_p(Pathname.new(ios_license_path).dirname)
