@@ -3,85 +3,90 @@ require 'json'
 require 'pathname'
 require 'fileutils'
 
-ios_license_path = "#{ENV['HOME']}/Library/MonoTouch/License.v2"
-android_license_path = "#{ENV['HOME']}/Library/MonoAndroid/License"
-mac_license_path = "#{ENV['HOME']}/Library/Xamarin.Mac/License"
-
 build_slug = ENV['build_slug']
-get_ios_license = ENV['xamarin_ios_license'].eql?("yes") ? true : false
-get_android_license = ENV['xamarin_android_license'].eql?("yes") ? true : false
-get_mac_license = ENV['xamarin_mac_license'].eql?("yes") ? true : false
 
-puts "\e[34mGathering Xamarin License requirements\e[0m"
-licenses = []
-if get_ios_license && File.exists?(ios_license_path)
-  get_ios_license = false
-  puts "Skipping Xamarin.iOS license downloading. Already downloaded."
-elsif get_ios_license
-  licenses << "Xamarin.iOS"
-end
-if get_android_license && File.exists?(android_license_path)
-  android_license_path = false
-  puts "Skipping Xamarin.Android license downloading. Already downloaded."
-elsif get_android_license
-  licenses << "Xamarin.Android"
-end
-if get_mac_license && File.exists?(mac_license_path)
-  mac_license_path = false
-  puts "Skipping Xamarin.Mac license downloading. Already downloaded."
-elsif get_mac_license
-  licenses << "Xamarin.Mac"
-end
+xamarin_ide_version = `cat "/Applications/Xamarin Studio.app/Contents/Resources/lib/monodevelop/bin/buildinfo" | grep "Release ID:" | grep -o '[0-9]*$'`
+skip_license_check = (xamarin_ide_version >= "601000817")
 
-if licenses.count == 0
-  puts "\e[32mAll requested licenses have already been downloaded to this machine\e[0m"
-  exit 0
-end
+unless skip_license_check
+  ios_license_path = "#{ENV['HOME']}/Library/MonoTouch/License.v2"
+  android_license_path = "#{ENV['HOME']}/Library/MonoAndroid/License"
+  mac_license_path = "#{ENV['HOME']}/Library/Xamarin.Mac/License"
 
-# Get machine information
-puts "Downloading license files for #{licenses.join(', ')}"
-machine_data = `/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/bin/mtouch --datafile`
+  get_ios_license = ENV['xamarin_ios_license'].eql?("yes") ? true : false
+  get_android_license = ENV['xamarin_android_license'].eql?("yes") ? true : false
+  get_mac_license = ENV['xamarin_mac_license'].eql?("yes") ? true : false
 
-url = 'http://xamarin.bitrise.io/add_machine'
+  puts "\e[34mGathering Xamarin License requirements\e[0m"
+  licenses = []
+  if get_ios_license && File.exists?(ios_license_path)
+    get_ios_license = false
+    puts "Skipping Xamarin.iOS license downloading. Already downloaded."
+  elsif get_ios_license
+    licenses << "Xamarin.iOS"
+  end
+  if get_android_license && File.exists?(android_license_path)
+    android_license_path = false
+    puts "Skipping Xamarin.Android license downloading. Already downloaded."
+  elsif get_android_license
+    licenses << "Xamarin.Android"
+  end
+  if get_mac_license && File.exists?(mac_license_path)
+    mac_license_path = false
+    puts "Skipping Xamarin.Mac license downloading. Already downloaded."
+  elsif get_mac_license
+    licenses << "Xamarin.Mac"
+  end
 
-uri = URI.parse(url)
-http = Net::HTTP.new(uri.host,uri.port)
-req = Net::HTTP::Post.new(uri.path)
-body = {
-  :build_slug => build_slug,
-  :device => machine_data,
-  :ios_license => get_ios_license,
-  :android_license => get_android_license,
-  :mac_license => get_mac_license
-}.to_json
+  if licenses.count == 0
+    puts "\e[32mAll requested licenses have already been downloaded to this machine\e[0m"
+  else
+    # Get machine information
+    puts "Downloading license files for #{licenses.join(', ')}"
+    machine_data = `/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/bin/mtouch --datafile`
 
-response = http.request(req, body)
-body = JSON.parse(response.body)
+    url = 'http://xamarin.bitrise.io/add_machine'
 
-if body['success'] == false
-  puts "\e[31m#{body['error']}\e[0m"
-  exit 1
-end
+    uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host,uri.port)
+    req = Net::HTTP::Post.new(uri.path)
+    body = {
+      :build_slug => build_slug,
+      :device => machine_data,
+      :ios_license => get_ios_license,
+      :android_license => get_android_license,
+      :mac_license => get_mac_license
+    }.to_json
 
-puts ""
-puts "\e[34mUpdating license files\e[0m"
+    response = http.request(req, body)
+    body = JSON.parse(response.body)
 
-if get_ios_license
-  FileUtils.mkdir_p(Pathname.new(ios_license_path).dirname)
-  `echo "#{body['ios']}" | base64 --decode > "#{ios_license_path}"`
-  puts "  \e[32mXamarin.iOS license file updated\e[0m (usage: #{body['ios_used_machines']}/#{body['ios_allowed_machines']})"
-end
+    if body['success'] == false
+      puts "\e[31m#{body['error']}\e[0m"
+      exit 1
+    end
 
-if get_android_license
-  FileUtils.mkdir_p(Pathname.new(android_license_path).dirname)
-  `echo "#{body['android']}" | base64 --decode > "#{android_license_path}"`
-  puts "  \e[32mXamarin.Android license file updated\e[0m (usage: #{body['android_used_machines']}/#{body['android_allowed_machines']})"
-end
+    puts ""
+    puts "\e[34mUpdating license files\e[0m"
 
-if get_mac_license
-  FileUtils.mkdir_p(Pathname.new(mac_license_path).dirname)
-  `echo "#{body['mac']}" | base64 --decode > "#{mac_license_path}"`
-  puts "  \e[32mXamarin.Mac license file updated\e[0m (usage: #{body['mac_used_machines']}/#{body['mac_allowed_machines']})"
+    if get_ios_license
+      FileUtils.mkdir_p(Pathname.new(ios_license_path).dirname)
+      `echo "#{body['ios']}" | base64 --decode > "#{ios_license_path}"`
+      puts "  \e[32mXamarin.iOS license file updated\e[0m (usage: #{body['ios_used_machines']}/#{body['ios_allowed_machines']})"
+    end
+
+    if get_android_license
+      FileUtils.mkdir_p(Pathname.new(android_license_path).dirname)
+      `echo "#{body['android']}" | base64 --decode > "#{android_license_path}"`
+      puts "  \e[32mXamarin.Android license file updated\e[0m (usage: #{body['android_used_machines']}/#{body['android_allowed_machines']})"
+    end
+
+    if get_mac_license
+      FileUtils.mkdir_p(Pathname.new(mac_license_path).dirname)
+      `echo "#{body['mac']}" | base64 --decode > "#{mac_license_path}"`
+      puts "  \e[32mXamarin.Mac license file updated\e[0m (usage: #{body['mac_used_machines']}/#{body['mac_allowed_machines']})"
+    end
+  end
 end
 
 # Get components
