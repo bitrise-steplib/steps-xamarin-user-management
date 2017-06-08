@@ -1,6 +1,12 @@
-## Changelog (Current version: 1.0.3)
+## Changelog (Current version: 1.1.0)
 
 -----------------
+
+### 1.1.0 (2017 Jun 08)
+
+* [ffcfe0a] Prepare for 1.1.0
+* [d19661e] removed unused inputs (#11)
+* [59e2cdd] Update step.rb (#10)
 
 ### 1.0.3 (2016 Sep 15)
 
@@ -32,4 +38,4 @@
 
 -----------------
 
-Updated: 2016 Sep 15
+Updated: 2017 Jun 08
