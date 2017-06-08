@@ -10,7 +10,7 @@ host_os_tags:
 project_type_tags:
   - xamarin
 type_tags:
-  - access control
+  - access-control
 is_requires_admin_user: false
 is_always_run: true
 is_skippable: true
