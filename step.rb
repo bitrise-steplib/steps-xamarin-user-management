@@ -20,7 +20,9 @@ response = http.request(req, body)
 body = JSON.parse(response.body)
 
 if body['success'] == false
+  puts body
   puts "\e[31mFailed to update Xamarin Components Credentials\e[0m"
+  exit 1
 else
   `echo "#{body['credential']}" | base64 --decode > "$HOME/.xamarin-credentials"`
   puts "  \e[32mUpdated Xamarin Components Credentials\e[0m"
