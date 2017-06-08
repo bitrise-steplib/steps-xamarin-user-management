@@ -13,7 +13,7 @@ type_tags:
   - access control
 is_requires_admin_user: false
 is_always_run: true
-is_skippable: false
+is_skippable: true
 run_if: .IsCI
 inputs:
   - build_slug: $BITRISE_BUILD_SLUG
