@@ -5,8 +5,6 @@ app:
   envs:
   - RELEASE_VERSION: 1.0.3
 
-  - BITRISE_APP_SLUG: $BITRISE_APP_SLUG
-
 workflows:
   test:
     steps:
@@ -14,9 +12,6 @@ workflows:
         title: Login
         inputs:
         - build_slug: $BITRISE_BUILD_SLUG
-        - xamarin_ios_license: "yes"
-        - xamarin_android_license: "yes"
-        - xamarin_mac_license: "no"
 
   # ----------------------------------------------------------------
   # --- workflows to create Release
